@@ -1,86 +1,94 @@
 #include "binary_trees.h"
 
+size_t binary_tree_height2(const binary_tree_t *tree);
 
-
-int is_perfect(const binary_tree_t *tree);
 /**
- * binary_tree_is_perfect - checks if a binary tree is perfect
- * @tree: pointer to the root node of the tree to check
- * Return:  1 if tree is perfect, 0 otherwise.
- *  If tree is NULL, your function must return 0
+ *binary_tree_is_perfect - checks if a binary tree is perfect
+ *
+ *@tree: pointer to the root node of the tree to check
+ *
+ *Return: if a binary tree is perfect 1 else 0
  */
 int binary_tree_is_perfect(const binary_tree_t *tree)
 {
-	if (tree == NULL)
-		return (0);
+size_t conf = 0, conf2 = 2, i = 0;
 
-	return (is_perfect(tree));
+if (tree == NULL)
+return (0);
+
+conf = binary_tree_height(tree);
+for (i = 1; i < conf; i++)
+conf2 = conf2 * 2;
+if (binary_tree_leaves(tree) == conf2)
+return (1);
+return (0);
 }
 
 /**
- * is_perfect - checks if a binary tree is perfect
- * @tree: pointer to the root node of the tree to check
- * Return:  1 if tree is perfect, 0 otherwise.
- *  If tree is NULL, return 1
+ * binary_tree_leaves - counts the leaves in a binary tree
+ *
+ *@tree: pointer to tree
+ *
+ *Return: number of leaves
  */
-int is_perfect(const binary_tree_t *tree)
+size_t binary_tree_leaves(const binary_tree_t *tree)
 {
-	/*
-	 * the idead here is that for a tree to be perfect,
-	 * it must have 0 or 2 children and the left height
-	 * must be equal to the right height.
-	 * this condition  is applied recursively on the
-	 * root node first, down to its children
-	 * till we get to the leaf nodes
-	 */
-	size_t lheight, rheight, has2children, issameheight;
+int cont1 = 0;
 
-	if (tree == NULL)
-		return (1);
+if (tree == NULL)
+return (0);
 
-	has2children = (tree->left != NULL && tree->right != NULL) ||
-		(tree->left == NULL && tree->right == NULL);
+if (tree->left == NULL && tree->right == NULL)
+return (cont1 + 1);
 
-	lheight = binary_tree_height(tree->left);
-	rheight = binary_tree_height(tree->right);
+if (tree->left != NULL)
+cont1 += binary_tree_leaves(tree->left);
 
-	issameheight = (lheight - rheight == 0);
+if (tree->right != NULL)
+cont1 += binary_tree_leaves(tree->right);
 
-	if (has2children && issameheight)
-		return (is_perfect(tree->left) && is_perfect(tree->right));
-	else
-		return (0);
+return (cont1);
+}
+
+
+/**
+ * binary_tree_height2 - measures the height of a binary tree
+ *
+ *@tree: pointer to tree
+ *
+ *Return: height
+ */
+
+size_t binary_tree_height2(const binary_tree_t *tree)
+{
+int cont1 = 0, cont2 = 0;
+
+if (tree == NULL)
+return (0);
+
+if (tree->left != NULL)
+cont1 += binary_tree_height2(tree->left);
+
+if (tree->right != NULL)
+cont2 += binary_tree_height2(tree->right);
+
+if (cont1 > cont2)
+return (cont1 + 1);
+return (cont2 + 1);
 }
 
 /**
  * binary_tree_height - measures the height of a binary tree
- * @tree: pointer to the root node of the tree to measure the height.
- * Return: return the height of the tree
- *  If tree is NULL, your function must return 0
+ *
+ *@tree: pointer to tree
+ *
+ *Return: height
  */
+
 size_t binary_tree_height(const binary_tree_t *tree)
 {
-	size_t lheight, rheight;
+if (tree == NULL)
+return (0);
 
-	if (tree == NULL)
-		return (0);
-
-	if (tree->left == NULL && tree->right == NULL)
-		return (1);
-
-	lheight = binary_tree_height(tree->left);
-	rheight = binary_tree_height(tree->right);
-
-	return (maxnum(lheight, rheight) + 1);
-}
-
-/**
- * maxnum - return the maximum of two numbers
- * @num1: first number to compare
- * @num2: second number to compare
- * Return: a number of type size_t
- */
-size_t maxnum(size_t num1, size_t num2)
-{
-	return (num1 > num2 ? num1 : num2);
+return ((binary_tree_height2(tree)) - 1);
 }

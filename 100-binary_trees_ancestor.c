@@ -1,56 +1,75 @@
 #include "binary_trees.h"
 
-/**
- * binary_trees_ancestor - finds the lowest common ancestor of two nodes
- * @first:  pointer to the first node
- * @second:  pointer to the second node
- * Return:  pointer to the lowest common ancestor node of the two given nodes
- * If no common ancestor was found, your function must return NULL
- */
-binary_tree_t *binary_trees_ancestor(binary_tree_t *first,
-		binary_tree_t *second)
-{
-	int found;
+#include <stdlib.h>
 
-	if (first == NULL)
+/**
+
+ * binary_tree_depth - measures the depth of a node in a binary tree
+
+ * @tree: a pointer to the node to measure the depth
+
+ * Return: 0 if tree is NULL
+
+ **/
+
+size_t binary_tree_depth(const binary_tree_t *tree)
+
+{
+
+	int i;
+
+	if (tree == NULL)
+
+		return (0);
+
+	for (i = 0; tree->parent; i++)
+
+		tree = tree->parent;
+
+	return (i);
+
+}
+
+/**
+
+ * binary_trees_ancestor - finds the lowest common ancestor of two nodes
+
+ * @first: a pointer to the first node
+
+ * @second: a pointer to the second node
+
+ * Return: return a pointer to the lowest common ancestor node
+
+ * Otherwise: if no ancestor, return NULL
+
+ */
+
+binary_tree_t *binary_trees_ancestor(const binary_tree_t *first,
+
+const binary_tree_t *second)
+
+{
+
+	size_t depth_f = binary_tree_depth(first);
+
+	size_t depth_s = binary_tree_depth(second);
+
+	if (first == NULL || second == NULL)
+
 		return (NULL);
 
-	found = find_node(first, second);
+	if (first == second)
 
-	if (found)
-		return (first);
-	return (binary_trees_ancestor(first->parent, second));
-}
+		return ((binary_tree_t *)first);
 
-/**
- * find_node - finds a node in a tree
- * @root: node to start search from
- * @node: node to search for
- * Return:  1 of node is found, 0 otherwise
- */
-int find_node(const binary_tree_t *root, const binary_tree_t *node)
-{
-	int lfind, rfind;
+	if (depth_f < depth_s)
 
-	if (node == NULL)
-		return (0);
-	if (root == NULL)
-		return (0);
-	if (root == node)
-		return (1);
+		return (binary_trees_ancestor(first, second->parent));
 
-	lfind = find_node(root->left, node);
-	rfind = find_node(root->right, node);
-	return (maxintnum(lfind, rfind));
-}
+	else if (depth_f > depth_s)
 
-/**
- * maxintnum - return the maximum of two numbers
- * @num1: first number to compare
- * @num2: second number to compare
- * Return: a number of type size_t
- */
-int maxintnum(int num1, int num2)
-{
-	return (num1 > num2 ? num1 : num2);
+		return (binary_trees_ancestor(first->parent, second));
+
+	return (binary_trees_ancestor(first->parent, second->parent));
+
 }

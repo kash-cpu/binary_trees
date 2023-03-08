@@ -1,37 +1,40 @@
 #include "binary_trees.h"
-
+#include "9-binary_tree_height.c"
 /**
- * binary_tree_levelorder - goes through a binary tree using
- * level-order traversal
- * @tree: pointer to the root node of the tree to traverse
- * @func: pointer to a function to call for each node.
- * The value in the node must be passed as a parameter to this function.
- * Return: If tree or func is NULL, do nothing
+ *print_level - print the nodes by level
+ *@func: pointer to a functionn
+ *@level: the level
+ *@node: pointer to the node
+ *Return: nothing
+ */
+void print_level(binary_tree_t *node, void (*func)(int), int level)
+{
+if (node != NULL && func != NULL)
+{
+if (level == 1)
+func(node->n);
+if (level > 1)
+{
+print_level(node->left, func, level - 1);
+print_level(node->right, func, level - 1);
+}
+}
+}
+/**
+ *binary_tree_levelorder - level-order traversal
+ *@tree: pointer to the tree
+ *@func: pointer to a function
+ *Return: nothing
  */
 void binary_tree_levelorder(const binary_tree_t *tree, void (*func)(int))
 {
-	/*
-	 * for level order traversal, i used a queue.
-	 * where the node to be processed are taken from the front (lindex)
-	 * and the new nodes are added to the back (rindex)
-	 */
-	const binary_tree_t *treelist[100], *temp;
-	int lindex = 0, rindex = 0;
+size_t height = 0;
+size_t counter;
+binary_tree_t *copy_tree = (binary_tree_t *)tree;
 
-	if (tree == NULL)
-		return;
-	if (func == NULL)
-		return;
-
-	treelist[rindex++] = tree;
-
-	while (rindex > lindex)
-	{
-		temp = treelist[lindex++];
-		if (temp->left != NULL)
-			treelist[rindex++] = temp->left;
-		if (temp->right != NULL)
-			treelist[rindex++] = temp->right;
-		func(temp->n);
-	}
+if (tree == NULL || func == NULL)
+return;
+height = binary_tree_height(tree);
+for (counter = 0; counter <= height + 1; counter++)
+print_level(copy_tree, func, counter);
 }
